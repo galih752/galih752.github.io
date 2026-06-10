@@ -1,57 +1,148 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>RD. Galih Rakasiwi | Data Engineer Portfolio</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f7f6f2; /* Latar belakang lembut */
-            font-family: 'Georgia', serif;
-            color: #333; /* Teks warna netral */
-        }
-
-        h1 {
-            font-size: 3.5rem;
-            font-weight: 400;
-            text-transform: capitalize;
-            letter-spacing: 2px;
-            background: linear-gradient(90deg, #d4a373, #a47148);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent; /* Efek gradien teks */
-            animation: fadeIn 3s ease-in-out;
-        }
-
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .line {
-            width: 50%;
-            height: 2px;
-            background-color: #d4a373;
-            margin: 10px auto 0 auto;
-            animation: fadeIn 3s ease-in-out 0.5s;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        .code-font { font-family: 'Fira Code', monospace; }
     </style>
 </head>
-<body>
-    <div>
-        <h1>Hello World</h1>
-        <div class="line"></div>
-    </div>
+<body class="bg-slate-900 text-slate-100 antialiased scroll-smooth">
+
+    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <span class="code-font text-emerald-400 font-bold text-lg">&lt;RG /&gt;</span>
+            <div class="flex space-x-6 text-sm font-medium text-slate-300">
+                <a href="#about" class="hover:text-emerald-400 transition">About</a>
+                <a href="#skills" class="hover:text-emerald-400 transition">Skills</a>
+                <a href="#projects" class="hover:text-emerald-400 transition">Projects</a>
+                <a href="#contact" class="hover:text-emerald-400 transition">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <section id="about" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
+        <p class="code-font text-emerald-400 text-sm mb-3">Halo, nama saya</p>
+        <h1 class="text-4xl sm:text-6xl font-bold text-slate-50 tracking-tight mb-4">RD. GALIH RAKASIWI.</h1>
+        <h2 class="text-3xl sm:text-5xl font-bold text-slate-400 tracking-tight mb-6">Membangun Pipa & Arsitektur Data Skala Besar.</h2>
+        <p class="text-slate-400 max-w-2xl text-base sm:text-lg mb-8 leading-relaxed">
+            Saya adalah seorang <span class="text-emerald-400 font-semibold">Data Engineer</span> profesional dengan latar belakang kuat dalam rekayasa ekstraksi data (*Scraper Engineering*). Berpengalaman lebih dari 2 tahun dalam merancang pipa data otomatis (*data pipeline*), manajemen antrean, optimasi arsitektur database, dan ekosistem *big data* untuk mendukung kebutuhan analitik waktu nyata (*real-time*).
+        </p>
+        <div class="flex flex-wrap gap-4">
+            <a href="#projects" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold rounded transition text-sm">Lihat Proyek Saya</a>
+            <a href="https://github.com/galih752" target="_blank" class="px-6 py-3 border border-slate-700 hover:border-emerald-400 text-slate-200 hover:text-emerald-400 font-semibold rounded transition text-sm code-font">📂 GitHub Profile</a>
+        </div>
+    </section>
+
+    <section id="skills" class="bg-slate-950 py-20 border-y border-slate-800">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-12 flex items-center">
+                <span class="text-emerald-400 code-font text-xl mr-2">01.</span> Keahlian Teknis
+            </h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
+                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Programming & Automation</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Python, SQL, TypeScript, Bash, Playwright, BeautifulSoup4 (BS4).</p>
+                </div>
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
+                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Data Pipeline & Streaming</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Apache Spark, Apache Kafka, NSQ, Beanstalkd Queue Architecture.</p>
+                </div>
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
+                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Databases & Warehouse</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">ElasticSearch (ES), PostgreSQL (PG), Redis, SSDB, GCP BigQuery.</p>
+                </div>
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
+                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Infrastructure & DevOps</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">Docker, Kubernetes, AWS Lambda, AWS S3 Management, Git, CI/CD pipelines.</p>
+                </div>
+                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
+                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Data Standards & Monitoring</h3>
+                    <p class="text-slate-400 text-sm leading-relaxed">ETL/ELT Framework, Hadoop Ecosystem, Prometheus, Grafana Analytics.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-12 flex items-center">
+            <span class="text-emerald-400 code-font text-xl mr-2">02.</span> Proyek Unggulan (Case Studies)
+        </h2>
+        
+        <div class="space-y-16">
+            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="text-xl font-bold text-slate-100">Dynamic Data Pipeline Engine</h3>
+                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">JSON-Configured Architecture</span>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed text-justify">
+                    Merancang mesin pemrosesan pipa data dinamis berbasis konfigurasi JSON untuk mengeliminasi kebutuhan modifikasi kode manual saat ada sumber data baru. Sistem ini secara otomatis memvalidasi integritas data, menyalurkannya melalui antrean <span class="text-slate-200">Beanstalkd</span> dan caching <span class="text-slate-200">Redis/SSDB</span>, kemudian melakukan pengindeksan akhir secara masif ke klaster <span class="text-slate-200">ElasticSearch</span>.
+                </p>
+                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
+                    <div>📊 <span class="text-slate-200 font-medium">Beban Kerja:</span> >500,000 data/hari</div>
+                    <div>🚀 <span class="text-slate-200 font-medium">Efisiensi Penyerapan:</span> Naik 40%</div>
+                </div>
+                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: Python, ElasticSearch, Beanstalkd, Redis, PostgreSQL</div>
+            </div>
+
+            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="text-xl font-bold text-slate-100">Advanced BPS Automation & Cloud Ingestion</h3>
+                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">Reverse Engineering & Cloud Analytics</span>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed text-justify">
+                    Membangun pipa otomasi ekstraksi data terstruktur langsung dari API internal situs Badan Pusat Statistik (BPS) menggunakan kombinasi <span class="text-slate-200">Playwright</span> dan Python. Data mentah ditransformasikan secara *real-time*, diamankan di dalam <span class="text-slate-200">AWS S3 Object Storage</span>, diperkaya ke relasi <span class="text-slate-200">PostgreSQL</span>, dan disinkronkan ke repositori analitik dengan tingkat akurasi transfer data mencapai 99.9%.
+                </p>
+                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
+                    <div>🎯 <span class="text-slate-200 font-medium">Akurasi Transfer:</span> 99.9% Success Rate</div>
+                    <div>🛠️ <span class="text-slate-200 font-medium">Metode:</span> Direct API Integration</div>
+                </div>
+                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: Python, Playwright, AWS S3, PostgreSQL, Linux Bash</div>
+            </div>
+
+            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
+                <div class="flex flex-wrap items-baseline justify-between gap-2">
+                    <h3 class="text-xl font-bold text-slate-100">Social Media Network Interception Pipeline</h3>
+                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">Network Sniffing & Stream Processing</span>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed text-justify">
+                    Mengatasi keterbatasan ekstraksi web tradisional dengan menerapkan teknik rekayasa balik menggunakan <span class="text-slate-200">Burp Suite</span> pada emulator Android untuk memetakan endpoint API tersembunyi. Sistem ini dikombinasikan dengan pipa aliran seluler berbasis <span class="text-slate-200">TypeScript</span> dan <span class="text-slate-200">Apache Kafka / NSQ</span> untuk menangani perubahan data berkala pada platform Facebook secara stabil, sukses menurunkan tingkat kegagalan ekstraksi hingga 15%.
+                </p>
+                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
+                    <div>🛑 <span class="text-slate-200 font-medium">Reduksi Kegagalan:</span> Turun 15%</div>
+                    <div>⚡ <span class="text-slate-200 font-medium">Arsitektur:</span> Message-Driven Streaming</div>
+                </div>
+                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: TypeScript, Apache Kafka, NSQ, Burp Suite, Android Emulator</div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="bg-slate-950 py-20 text-center border-t border-slate-800">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-4">Mari Berkolaborasi</h2>
+            <p class="text-slate-400 text-sm sm:text-base mb-8 max-w-md mx-auto">
+                Saya selalu terbuka untuk mendiskusikan arsitektur data, otomatisasi sistem, atau peluang karir di bidang Data Engineering.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm code-font">
+                <a href="mailto:rakasiwigalih947@gmail.com" class="px-5 py-3 bg-slate-900 border border-slate-800 hover:border-emerald-400 text-emerald-400 rounded transition w-full sm:w-auto">
+                    📧 rakasiwigalih947@gmail.com
+                </a>
+                <a href="https://www.linkedin.com/in/rd-galih-rakasiwi-3626b5246/" target="_blank" class="px-5 py-3 bg-slate-900 border border-slate-800 hover:border-emerald-400 text-slate-300 rounded transition w-full sm:w-auto">
+                    🔗 LinkedIn Profile
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="py-8 bg-slate-950 text-center text-xs text-slate-600 border-t border-slate-900">
+        <p class="code-font">&copy; 2026 RD. Galih Rakasiwi. Built with Tailwind CSS.</p>
+    </footer>
+
 </body>
 </html>
