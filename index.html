@@ -7,142 +7,955 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .code-font { font-family: 'Fira Code', monospace; }
+        /* ============================================
+           RESET & BASE
+           ============================================ */
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: #050914;
+            color: #e2e8f0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+        .mono { font-family: 'Fira Code', 'Cascadia Code', monospace; }
+        .grotesk { font-family: 'Space Grotesk', 'Inter', sans-serif; }
+
+        /* ============================================
+           ANIMATED BACKGROUND - PARTICLES + GRID
+           ============================================ */
+        #bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        /* ============================================
+           SCROLL-DRIVEN PROGRESS BAR
+           ============================================ */
+        #progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #10b981, #06b6d4, #8b5cf6);
+            z-index: 100;
+            transition: width 0.1s linear;
+            border-radius: 0 2px 2px 0;
+        }
+
+        /* ============================================
+           NAVIGATION
+           ============================================ */
+        nav {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 90;
+            background: rgba(5, 9, 20, 0.7);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50px;
+            padding: 6px 8px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+        }
+        nav.scrolled {
+            background: rgba(5, 9, 20, 0.9);
+            border-color: rgba(255,255,255,0.12);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        nav .logo {
+            padding: 8px 16px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #10b981;
+            background: rgba(16,185,129,0.1);
+            border-radius: 50px;
+            margin-right: 4px;
+            letter-spacing: -0.02em;
+            white-space: nowrap;
+        }
+        nav .nav-links {
+            display: flex;
+            gap: 2px;
+        }
+        nav a.nav-link {
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.82rem;
+            font-weight: 500;
+            color: #94a3b8;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            white-space: nowrap;
+            position: relative;
+        }
+        nav a.nav-link:hover,
+        nav a.nav-link.active {
+            color: #fff;
+            background: rgba(255,255,255,0.06);
+        }
+
+        /* ============================================
+           CONTAINER
+           ============================================ */
+        .container-main {
+            position: relative;
+            z-index: 10;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* ============================================
+           SECTION TITLES
+           ============================================ */
+        .section-eyebrow {
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.25em;
+            text-transform: uppercase;
+            color: #10b981;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .section-eyebrow::before {
+            content: '';
+            width: 24px;
+            height: 1.5px;
+            background: #10b981;
+            border-radius: 1px;
+        }
+        .section-title {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+        }
+
+        /* ============================================
+           HERO
+           ============================================ */
+        #about {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 100px;
+            padding-bottom: 80px;
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: #6ee7b7;
+            margin-bottom: 28px;
+            animation: fadeSlideUp 0.8s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .hero-badge .pulse-dot {
+            width: 7px;
+            height: 7px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: softPulse 2s ease-in-out infinite;
+        }
+        .hero-name {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(3rem, 7vw, 5.5rem);
+            font-weight: 800;
+            color: #f8fafc;
+            letter-spacing: -0.04em;
+            line-height: 1;
+            animation: fadeSlideUp 0.8s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .hero-name .accent {
+            color: transparent;
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+        .hero-tagline {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: clamp(1.4rem, 3vw, 2.2rem);
+            font-weight: 600;
+            color: #64748b;
+            letter-spacing: -0.03em;
+            line-height: 1.25;
+            margin-top: 8px;
+            animation: fadeSlideUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .hero-desc {
+            max-width: 600px;
+            font-size: 1rem;
+            color: #94a3b8;
+            margin-top: 24px;
+            line-height: 1.7;
+            animation: fadeSlideUp 0.8s 0.3s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .hero-desc strong {
+            color: #34d399;
+            font-weight: 600;
+        }
+        .hero-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 32px;
+            animation: fadeSlideUp 0.8s 0.4s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .btn-main {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .btn-fill {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #050914;
+            box-shadow: 0 4px 20px rgba(16,185,129,0.25);
+        }
+        .btn-fill:hover {
+            box-shadow: 0 8px 32px rgba(16,185,129,0.4);
+            transform: translateY(-2px);
+        }
+        .btn-ghost {
+            border: 1px solid rgba(148,163,184,0.2);
+            color: #cbd5e1;
+        }
+        .btn-ghost:hover {
+            border-color: rgba(16,185,129,0.5);
+            color: #6ee7b7;
+            background: rgba(16,185,129,0.05);
+            transform: translateY(-2px);
+        }
+
+        /* ============================================
+           SKILLS - BENTO GRID
+           ============================================ */
+        #skills {
+            padding: 100px 0;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            background: rgba(8,12,28,0.5);
+        }
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: auto auto;
+            gap: 16px;
+            margin-top: 40px;
+        }
+        .bento-card {
+            background: rgba(15, 20, 40, 0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+            cursor: default;
+        }
+        .bento-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            background: radial-gradient(ellipse at center, rgba(16,185,129,0.06), transparent 70%);
+        }
+        .bento-card:hover::before { opacity: 1; }
+        .bento-card:hover {
+            border-color: rgba(16,185,129,0.2);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.3);
+        }
+        .bento-card .card-icon {
+            font-size: 1.6rem;
+            margin-bottom: 14px;
+            display: block;
+            width: 42px;
+            height: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(16,185,129,0.08);
+            border-radius: 12px;
+        }
+        .bento-card h3 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 10px;
+        }
+        .bento-card .tech-list {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            line-height: 1.6;
+        }
+        .bento-card .tech-list span {
+            display: inline-block;
+            background: rgba(255,255,255,0.03);
+            padding: 3px 10px;
+            border-radius: 6px;
+            margin: 2px 4px 2px 0;
+            font-size: 0.78rem;
+            color: #cbd5e1;
+            transition: all 0.2s ease;
+        }
+        .bento-card:hover .tech-list span {
+            background: rgba(16,185,129,0.06);
+            color: #6ee7b7;
+        }
+        /* Bento spans */
+        .bento-card.span-2-col { grid-column: span 2; }
+        .bento-card.span-2-row { grid-row: span 2; }
+
+        /* ============================================
+           PROJECTS
+           ============================================ */
+        #projects {
+            padding: 100px 0;
+        }
+        .project-card {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 48px;
+            align-items: center;
+            padding: 48px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.04);
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .project-card:last-child { border-bottom: none; }
+        .project-card:hover .project-number {
+            color: #10b981;
+            transform: scale(1.1);
+        }
+        .project-number {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 5rem;
+            font-weight: 800;
+            color: rgba(16,185,129,0.06);
+            line-height: 1;
+            transition: all 0.4s ease;
+            user-select: none;
+            grid-row: 1 / span 3;
+            align-self: start;
+            margin-top: -10px;
+        }
+        .project-content { display: flex; flex-direction: column; gap: 14px; }
+        .project-content h3 {
+            font-family: 'Space Grotesk', 'Inter', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #f1f5f9;
+            letter-spacing: -0.02em;
+        }
+        .project-content .tag {
+            display: inline-flex;
+            align-self: flex-start;
+            padding: 4px 12px;
+            background: rgba(16,185,129,0.08);
+            border: 1px solid rgba(16,185,129,0.18);
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #6ee7b7;
+            letter-spacing: 0.04em;
+        }
+        .project-content p {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            line-height: 1.7;
+        }
+        .project-content p strong {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        .project-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 4px;
+        }
+        .stat-pill {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+        .stat-pill .stat-val {
+            color: #e2e8f0;
+            font-weight: 600;
+        }
+        .project-tech {
+            font-size: 0.75rem;
+            color: #10b981;
+            font-weight: 500;
+            letter-spacing: 0.03em;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .project-tech::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 6px rgba(16,185,129,0.5);
+        }
+        .project-visual {
+            background: rgba(15, 20, 40, 0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 200px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .project-visual::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 30% 50%, rgba(16,185,129,0.04), transparent 60%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .project-card:hover .project-visual { border-color: rgba(16,185,129,0.15); }
+        .project-card:hover .project-visual::after { opacity: 1; }
+        .visual-block {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+        .visual-block .v-row {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .visual-block .v-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #10b981;
+            box-shadow: 0 0 8px rgba(16,185,129,0.4);
+            flex-shrink: 0;
+        }
+        .visual-block .v-line {
+            flex: 1;
+            height: 1.5px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 1px;
+        }
+        .visual-block .v-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(90deg, rgba(16,185,129,0.3), rgba(16,185,129,0.05));
+        }
+        .visual-block .v-bar.wide { width: 75%; }
+        .visual-block .v-bar.mid { width: 50%; }
+        .visual-block .v-bar.small { width: 30%; }
+        .visual-block .v-node {
+            padding: 6px 14px;
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 8px;
+            font-size: 0.65rem;
+            color: #6ee7b7;
+            background: rgba(16,185,129,0.05);
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           CONTACT
+           ============================================ */
+        #contact {
+            padding: 100px 0;
+            text-align: center;
+            border-top: 1px solid rgba(255,255,255,0.04);
+            background: rgba(8,12,28,0.5);
+        }
+        #contact .section-eyebrow { justify-content: center; }
+        #contact .section-eyebrow::after {
+            content: '';
+            width: 24px;
+            height: 1.5px;
+            background: #10b981;
+            border-radius: 1px;
+        }
+        .contact-cards {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 14px;
+            margin-top: 32px;
+        }
+        .contact-card {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 16px 26px;
+            background: rgba(15, 20, 40, 0.7);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 50px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: all 0.35s cubic-bezier(0.4,0,0.2,1);
+            backdrop-filter: blur(10px);
+        }
+        .contact-card:hover {
+            border-color: rgba(16,185,129,0.35);
+            background: rgba(16,185,129,0.06);
+            color: #6ee7b7;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.3);
+        }
+        .contact-card .icon-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            background: rgba(16,185,129,0.1);
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+        footer {
+            padding: 28px 0;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #475569;
+            border-top: 1px solid rgba(255,255,255,0.03);
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes softPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.5; transform: scale(1.6); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+
+        /* Reveal on scroll via JS */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE
+           ============================================ */
+        @media (max-width: 768px) {
+            nav {
+                top: 8px;
+                padding: 4px 6px;
+                gap: 1px;
+            }
+            nav .logo { font-size: 0.75rem; padding: 6px 12px; }
+            nav a.nav-link { font-size: 0.7rem; padding: 6px 10px; }
+            #about { min-height: auto; padding-top: 120px; }
+            .bento-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+            }
+            .bento-card.span-2-col,
+            .bento-card.span-2-row { grid-column: span 2; grid-row: auto; }
+            .project-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            .project-number { display: none; }
+            .project-visual { min-height: 140px; }
+        }
+        @media (max-width: 480px) {
+            .bento-grid { grid-template-columns: 1fr; }
+            .bento-card.span-2-col { grid-column: span 1; }
+            .hero-name { font-size: 2.4rem; }
+        }
     </style>
 </head>
-<body class="bg-slate-900 text-slate-100 antialiased scroll-smooth">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <span class="code-font text-emerald-400 font-bold text-lg">&lt;RG /&gt;</span>
-            <div class="flex space-x-6 text-sm font-medium text-slate-300">
-                <a href="#about" class="hover:text-emerald-400 transition">About</a>
-                <a href="#skills" class="hover:text-emerald-400 transition">Skills</a>
-                <a href="#projects" class="hover:text-emerald-400 transition">Projects</a>
-                <a href="#contact" class="hover:text-emerald-400 transition">Contact</a>
-            </div>
+    <!-- Progress bar -->
+    <div id="progress-bar"></div>
+
+    <!-- Animated canvas background -->
+    <canvas id="bg-canvas"></canvas>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <span class="logo mono">&lt;RG /&gt;</span>
+        <div class="nav-links">
+            <a href="#about" class="nav-link active">About</a>
+            <a href="#skills" class="nav-link">Skills</a>
+            <a href="#projects" class="nav-link">Projects</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </div>
     </nav>
 
-    <section id="about" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32">
-        <p class="code-font text-emerald-400 text-sm mb-3">Halo, nama saya</p>
-        <h1 class="text-4xl sm:text-6xl font-bold text-slate-50 tracking-tight mb-4">RD. GALIH RAKASIWI.</h1>
-        <h2 class="text-3xl sm:text-5xl font-bold text-slate-400 tracking-tight mb-6">Membangun Pipa & Arsitektur Data Skala Besar.</h2>
-        <p class="text-slate-400 max-w-2xl text-base sm:text-lg mb-8 leading-relaxed">
-            Saya adalah seorang <span class="text-emerald-400 font-semibold">Data Engineer</span> profesional dengan latar belakang kuat dalam rekayasa ekstraksi data (*Scraper Engineering*). Berpengalaman lebih dari 2 tahun dalam merancang pipa data otomatis (*data pipeline*), manajemen antrean, optimasi arsitektur database, dan ekosistem *big data* untuk mendukung kebutuhan analitik waktu nyata (*real-time*).
-        </p>
-        <div class="flex flex-wrap gap-4">
-            <a href="#projects" class="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold rounded transition text-sm">Lihat Proyek Saya</a>
-            <a href="https://github.com/galih752" target="_blank" class="px-6 py-3 border border-slate-700 hover:border-emerald-400 text-slate-200 hover:text-emerald-400 font-semibold rounded transition text-sm code-font">📂 GitHub Profile</a>
-        </div>
-    </section>
-
-    <section id="skills" class="bg-slate-950 py-20 border-y border-slate-800">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-12 flex items-center">
-                <span class="text-emerald-400 code-font text-xl mr-2">01.</span> Keahlian Teknis
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
-                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Programming & Automation</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Python, SQL, TypeScript, Bash, Playwright, BeautifulSoup4 (BS4).</p>
-                </div>
-                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
-                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Data Pipeline & Streaming</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Apache Spark, Apache Kafka, NSQ, Beanstalkd Queue Architecture.</p>
-                </div>
-                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
-                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Databases & Warehouse</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">ElasticSearch (ES), PostgreSQL (PG), Redis, SSDB, GCP BigQuery.</p>
-                </div>
-                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
-                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Infrastructure & DevOps</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">Docker, Kubernetes, AWS Lambda, AWS S3 Management, Git, CI/CD pipelines.</p>
-                </div>
-                <div class="p-6 bg-slate-900 border border-slate-800 rounded-lg">
-                    <h3 class="text-emerald-400 font-bold mb-3 text-sm tracking-wide uppercase code-font">Data Standards & Monitoring</h3>
-                    <p class="text-slate-400 text-sm leading-relaxed">ETL/ELT Framework, Hadoop Ecosystem, Prometheus, Grafana Analytics.</p>
-                </div>
+    <!-- ==================== HERO ==================== -->
+    <section id="about" class="container-main">
+        <div>
+            <div class="hero-badge">
+                <span class="pulse-dot"></span> Available for opportunities
+            </div>
+            <h1 class="hero-name">
+                RD. GALIH<br><span class="accent">RAKASIWI.</span>
+            </h1>
+            <p class="hero-tagline">Membangun Pipeline Data &amp; Arsitektur Skala Besar.</p>
+            <p class="hero-desc">
+                Saya adalah seorang <strong>Data Engineer</strong> profesional dengan latar belakang kuat dalam rekayasa ekstraksi data (<strong>Scraper Engineering</strong>). Berpengalaman lebih dari 2 tahun dalam merancang pipeline data otomatis, manajemen antrean (queue), optimasi arsitektur database, dan ekosistem big data untuk mendukung kebutuhan analitik real-time.
+            </p>
+            <div class="hero-actions">
+                <a href="#projects" class="btn-main btn-fill">Lihat Proyek Saya</a>
+                <a href="https://github.com/galih752" target="_blank" class="btn-main btn-ghost mono">
+                    <span>📂</span> GitHub Profile
+                </a>
             </div>
         </div>
     </section>
 
-    <section id="projects" class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-        <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-12 flex items-center">
-            <span class="text-emerald-400 code-font text-xl mr-2">02.</span> Proyek Unggulan (Case Studies)
-        </h2>
-        
-        <div class="space-y-16">
-            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                    <h3 class="text-xl font-bold text-slate-100">Dynamic Data Pipeline Engine</h3>
-                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">JSON-Configured Architecture</span>
-                </div>
-                <p class="text-slate-400 text-sm leading-relaxed text-justify">
-                    Merancang mesin pemrosesan pipa data dinamis berbasis konfigurasi JSON untuk mengeliminasi kebutuhan modifikasi kode manual saat ada sumber data baru. Sistem ini secara otomatis memvalidasi integritas data, menyalurkannya melalui antrean <span class="text-slate-200">Beanstalkd</span> dan caching <span class="text-slate-200">Redis/SSDB</span>, kemudian melakukan pengindeksan akhir secara masif ke klaster <span class="text-slate-200">ElasticSearch</span>.
-                </p>
-                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
-                    <div>📊 <span class="text-slate-200 font-medium">Beban Kerja:</span> >500,000 data/hari</div>
-                    <div>🚀 <span class="text-slate-200 font-medium">Efisiensi Penyerapan:</span> Naik 40%</div>
-                </div>
-                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: Python, ElasticSearch, Beanstalkd, Redis, PostgreSQL</div>
-            </div>
+    <!-- ==================== SKILLS ==================== -->
+    <section id="skills">
+        <div class="container-main">
+            <p class="section-eyebrow">Expertise</p>
+            <h2 class="section-title">Keahlian Teknis</h2>
 
-            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                    <h3 class="text-xl font-bold text-slate-100">Advanced BPS Automation & Cloud Ingestion</h3>
-                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">Reverse Engineering & Cloud Analytics</span>
+            <div class="bento-grid">
+                <!-- Card 1: Programming -->
+                <div class="bento-card span-2-col reveal">
+                    <span class="card-icon">⚡</span>
+                    <h3>Programming &amp; Automation</h3>
+                    <div class="tech-list">
+                        <span>Python</span><span>SQL</span><span>TypeScript</span><span>Bash</span><span>Playwright</span><span>BeautifulSoup4 (BS4)</span>
+                    </div>
                 </div>
-                <p class="text-slate-400 text-sm leading-relaxed text-justify">
-                    Membangun pipa otomasi ekstraksi data terstruktur langsung dari API internal situs Badan Pusat Statistik (BPS) menggunakan kombinasi <span class="text-slate-200">Playwright</span> dan Python. Data mentah ditransformasikan secara *real-time*, diamankan di dalam <span class="text-slate-200">AWS S3 Object Storage</span>, diperkaya ke relasi <span class="text-slate-200">PostgreSQL</span>, dan disinkronkan ke repositori analitik dengan tingkat akurasi transfer data mencapai 99.9%.
-                </p>
-                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
-                    <div>🎯 <span class="text-slate-200 font-medium">Akurasi Transfer:</span> 99.9% Success Rate</div>
-                    <div>🛠️ <span class="text-slate-200 font-medium">Metode:</span> Direct API Integration</div>
-                </div>
-                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: Python, Playwright, AWS S3, PostgreSQL, Linux Bash</div>
-            </div>
 
-            <div class="border-l-2 border-emerald-400 pl-6 space-y-4">
-                <div class="flex flex-wrap items-baseline justify-between gap-2">
-                    <h3 class="text-xl font-bold text-slate-100">Social Media Network Interception Pipeline</h3>
-                    <span class="px-2 py-1 bg-slate-800 text-emerald-400 text-xs rounded code-font">Network Sniffing & Stream Processing</span>
+                <!-- Card 2: Pipeline -->
+                <div class="bento-card span-2-col reveal">
+                    <span class="card-icon">🔗</span>
+                    <h3>Data Pipeline &amp; Streaming</h3>
+                    <div class="tech-list">
+                        <span>Apache Spark</span><span>Apache Kafka</span><span>NSQ</span><span>Beanstalkd Queue Architecture</span>
+                    </div>
                 </div>
-                <p class="text-slate-400 text-sm leading-relaxed text-justify">
-                    Mengatasi keterbatasan ekstraksi web tradisional dengan menerapkan teknik rekayasa balik menggunakan <span class="text-slate-200">Burp Suite</span> pada emulator Android untuk memetakan endpoint API tersembunyi. Sistem ini dikombinasikan dengan pipa aliran seluler berbasis <span class="text-slate-200">TypeScript</span> dan <span class="text-slate-200">Apache Kafka / NSQ</span> untuk menangani perubahan data berkala pada platform Facebook secara stabil, sukses menurunkan tingkat kegagalan ekstraksi hingga 15%.
-                </p>
-                <div class="flex flex-wrap gap-6 text-xs text-slate-400 pt-2">
-                    <div>🛑 <span class="text-slate-200 font-medium">Reduksi Kegagalan:</span> Turun 15%</div>
-                    <div>⚡ <span class="text-slate-200 font-medium">Arsitektur:</span> Message-Driven Streaming</div>
+
+                <!-- Card 3: Databases -->
+                <div class="bento-card reveal">
+                    <span class="card-icon">🗄️</span>
+                    <h3>Databases &amp; Warehouse</h3>
+                    <div class="tech-list">
+                        <span>ElasticSearch</span><span>PostgreSQL</span><span>Redis</span><span>SSDB</span><span>GCP BigQuery</span>
+                    </div>
                 </div>
-                <div class="text-xs text-emerald-400 font-medium code-font">Tech Stack: TypeScript, Apache Kafka, NSQ, Burp Suite, Android Emulator</div>
+
+                <!-- Card 4: DevOps -->
+                <div class="bento-card span-2-col reveal">
+                    <span class="card-icon">☸️</span>
+                    <h3>Infrastructure &amp; DevOps</h3>
+                    <div class="tech-list">
+                        <span>Docker</span><span>Kubernetes</span><span>AWS Lambda</span><span>AWS S3 Management</span><span>Git</span><span>CI/CD pipelines</span>
+                    </div>
+                </div>
+
+                <!-- Card 5: Monitoring -->
+                <div class="bento-card reveal">
+                    <span class="card-icon">📊</span>
+                    <h3>Data Standards &amp; Monitoring</h3>
+                    <div class="tech-list">
+                        <span>ETL/ELT</span><span>Hadoop</span><span>Prometheus</span><span>Grafana</span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="bg-slate-950 py-20 text-center border-t border-slate-800">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 class="text-2xl sm:text-3xl font-bold text-slate-50 mb-4">Mari Berkolaborasi</h2>
-            <p class="text-slate-400 text-sm sm:text-base mb-8 max-w-md mx-auto">
+    <!-- ==================== PROJECTS ==================== -->
+    <section id="projects">
+        <div class="container-main">
+            <p class="section-eyebrow">Case Studies</p>
+            <h2 class="section-title">Proyek Unggulan</h2>
+
+            <!-- Project 1 -->
+            <div class="project-card reveal">
+                <span class="project-number">01</span>
+                <div class="project-content">
+                    <span class="tag mono">JSON-Configured Architecture</span>
+                    <h3>Dynamic Data Pipeline Engine</h3>
+                    <p>
+                        Merancang mesin pemrosesan pipeline data dinamis berbasis konfigurasi JSON untuk mengeliminasi kebutuhan modifikasi kode manual saat ada sumber data baru. Sistem ini secara otomatis memvalidasi integritas data, menyalurkannya melalui antrean <strong>Beanstalkd</strong> dan caching <strong>Redis/SSDB</strong>, kemudian melakukan pengindeksan akhir secara masif ke klaster <strong>ElasticSearch</strong>.
+                    </p>
+                    <div class="project-stats">
+                        <div class="stat-pill">📊 <span class="stat-val">Beban Kerja:</span> &gt;500,000 data/hari</div>
+                        <div class="stat-pill">🚀 <span class="stat-val">Efisiensi Penyerapan:</span> Naik 40%</div>
+                    </div>
+                    <div class="project-tech mono">Tech Stack: Python, ElasticSearch, Beanstalkd, Redis, PostgreSQL</div>
+                </div>
+                <div class="project-visual">
+                    <div class="visual-block">
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">JSON Config</span></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Beanstalkd</span></div>
+                        <div class="v-bar wide"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Redis/SSDB</span></div>
+                        <div class="v-bar mid"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">ElasticSearch</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 2 -->
+            <div class="project-card reveal">
+                <span class="project-number">02</span>
+                <div class="project-content">
+                    <span class="tag mono">Reverse Engineering &amp; Cloud Analytics</span>
+                    <h3>Advanced BPS Automation &amp; Cloud Ingestion</h3>
+                    <p>
+                        Membangun pipeline otomasi ekstraksi data terstruktur langsung dari API internal situs Badan Pusat Statistik (BPS) menggunakan kombinasi <strong>Playwright</strong> dan Python. Data mentah ditransformasikan secara <em>real-time</em>, diamankan di dalam <strong>AWS S3 Object Storage</strong>, diperkaya ke relasi <strong>PostgreSQL</strong>, dan disinkronkan ke repositori analitik dengan tingkat akurasi transfer data mencapai 99.9%.
+                    </p>
+                    <div class="project-stats">
+                        <div class="stat-pill">🎯 <span class="stat-val">Akurasi Transfer:</span> 99.9% Success Rate</div>
+                        <div class="stat-pill">🛠️ <span class="stat-val">Metode:</span> Direct API Integration</div>
+                    </div>
+                    <div class="project-tech mono">Tech Stack: Python, Playwright, AWS S3, PostgreSQL, Linux Bash</div>
+                </div>
+                <div class="project-visual">
+                    <div class="visual-block">
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Playwright</span></div>
+                        <div class="v-bar small"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Python Transform</span></div>
+                        <div class="v-bar wide"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">AWS S3</span></div>
+                        <div class="v-bar mid"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">PostgreSQL</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Project 3 -->
+            <div class="project-card reveal">
+                <span class="project-number">03</span>
+                <div class="project-content">
+                    <span class="tag mono">Network Sniffing &amp; Stream Processing</span>
+                    <h3>Social Media Network Interception Pipeline</h3>
+                    <p>
+                        Mengatasi keterbatasan ekstraksi web tradisional dengan menerapkan teknik rekayasa balik menggunakan <strong>Burp Suite</strong> pada emulator Android untuk memetakan endpoint API tersembunyi. Sistem ini dikombinasikan dengan pipeline aliran seluler berbasis <strong>TypeScript</strong> dan <strong>Apache Kafka / NSQ</strong> untuk menangani perubahan data berkala pada platform Facebook secara stabil, sukses menurunkan tingkat kegagalan ekstraksi hingga 15%.
+                    </p>
+                    <div class="project-stats">
+                        <div class="stat-pill">🛑 <span class="stat-val">Reduksi Kegagalan:</span> Turun 15%</div>
+                        <div class="stat-pill">⚡ <span class="stat-val">Arsitektur:</span> Message-Driven Streaming</div>
+                    </div>
+                    <div class="project-tech mono">Tech Stack: TypeScript, Apache Kafka, NSQ, Burp Suite, Android Emulator</div>
+                </div>
+                <div class="project-visual">
+                    <div class="visual-block">
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Burp Suite</span></div>
+                        <div class="v-bar small"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">Android Emulator</span></div>
+                        <div class="v-bar mid"></div>
+                        <div class="v-row"><span class="v-dot"></span><span class="v-line"></span><span class="v-node mono">TS + Kafka/NSQ</span></div>
+                        <div class="v-bar wide"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CONTACT ==================== -->
+    <section id="contact">
+        <div class="container-main">
+            <p class="section-eyebrow">Get In Touch</p>
+            <h2 class="section-title">Mari Berkolaborasi</h2>
+            <p style="color:#94a3b8;max-width:480px;margin:16px auto 0;font-size:0.95rem;line-height:1.6;">
                 Saya selalu terbuka untuk mendiskusikan arsitektur data, otomatisasi sistem, atau peluang karir di bidang Data Engineering.
             </p>
-            <div class="flex flex-col sm:flex-row justify-center items-center gap-4 text-sm code-font">
-                <a href="mailto:rakasiwigalih947@gmail.com" class="px-5 py-3 bg-slate-900 border border-slate-800 hover:border-emerald-400 text-emerald-400 rounded transition w-full sm:w-auto">
-                    📧 rakasiwigalih947@gmail.com
+            <div class="contact-cards">
+                <a href="mailto:rakasiwigalih947@gmail.com" class="contact-card mono">
+                    <span class="icon-circle">📧</span> rakasiwigalih947@gmail.com
                 </a>
-                <a href="https://www.linkedin.com/in/rd-galih-rakasiwi-3626b5246/" target="_blank" class="px-5 py-3 bg-slate-900 border border-slate-800 hover:border-emerald-400 text-slate-300 rounded transition w-full sm:w-auto">
-                    🔗 LinkedIn Profile
+                <a href="https://www.linkedin.com/in/rd-galih-rakasiwi-3626b5246/" target="_blank" class="contact-card mono">
+                    <span class="icon-circle">🔗</span> LinkedIn Profile
                 </a>
             </div>
         </div>
     </section>
 
-    <footer class="py-8 bg-slate-950 text-center text-xs text-slate-600 border-t border-slate-900">
-        <p class="code-font">&copy; 2026 RD. Galih Rakasiwi. Built with Tailwind CSS.</p>
+    <!-- ==================== FOOTER ==================== -->
+    <footer>
+        <div class="container-main">
+            <p class="mono">&copy; 2026 RD. Galih Rakasiwi. Built with Tailwind CSS.</p>
+        </div>
     </footer>
 
+    <!-- ==================== SCRIPTS ==================== -->
+    <script>
+        // ── Particle background ──
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        let animId;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = document.documentElement.scrollHeight;
+        }
+        resizeCanvas();
+
+        const PARTICLE_COUNT = 70;
+        class Particle {
+            constructor() {
+                this.reset(true);
+            }
+            reset(init = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = init ? Math.random() * canvas.height : canvas.height + 20;
+                this.size = Math.random() * 1.5 + 0.5;
+                this.speedY = -(Math.random() * 0.3 + 0.08);
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.opacity = Math.random() * 0.4 + 0.1;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                if (this.y < -20 || this.x < -20 || this.x > canvas.width + 20) {
+                    this.reset();
+                }
+            }
+            draw(ctx) {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(16,185,129,${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < PARTICLE_COUNT; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Draw connecting lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw(ctx);
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < 100) {
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(16,185,129,${0.03 * (1 - dist/100)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.stroke();
+                    }
+                }
+            }
+            animId = requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            resizeCanvas();
+            particles.forEach(p => p.reset(true));
+        });
+
+        // ── Scroll progress bar ──
+        const progressBar = document.getElementById('progress-bar');
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+            progressBar.style.width = progress + '%';
+
+            // Nav background on scroll
+            const nav = document.getElementById('navbar');
+            if (scrollTop > 40) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // ── Active nav link ──
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(s => {
+                const top = s.offsetTop - 120;
+                if (window.scrollY >= top) current = s.getAttribute('id');
+            });
+            navLinks.forEach(a => {
+                a.classList.remove('active');
+                if (a.getAttribute('href') === '#' + current) a.classList.add('active');
+            });
+        });
+
+        // ── Scroll reveal ──
+        const revealEls = document.querySelectorAll('.reveal');
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+        revealEls.forEach(el => revealObserver.observe(el));
+    </script>
 </body>
 </html>
