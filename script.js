@@ -171,7 +171,8 @@ function startIntroTyping() {
 
   const target = document.getElementById("nama-typed");
   const name = DATA.nama;
-  fitText(target, name); // atur ukuran agar muat, lalu ketik dari awal
+  // Nama dibiarkan melipat alami (tidak dipaksa satu baris) biar tetap
+  // besar & terbaca di layar HP.
   let i = 0;
   target.textContent = "";
   const typing = setInterval(() => {
